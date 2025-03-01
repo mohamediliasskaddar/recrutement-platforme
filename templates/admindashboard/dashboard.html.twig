@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Administrateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin_sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'admindashboard/admin_sidebar.html.twig' with {'active': 'dashboard'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="dashboard-main">
+                <div class="dashboard-header">
+                    <h1>Bienvenue, Administrateur</h1>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="welcome-card">
+                        <h2>Votre espace administrateur</h2>
+                        <p>Bienvenue sur votre tableau de bord. Ici, vous pouvez :</p>
+                        <ul>
+                            <li>Gérer les utilisateurs (candidats et entreprises)</li>
+                            <li>Superviser les offres d'emploi</li>
+                            <li>Analyser les statistiques du site</li>
+                            <li>Gérer les paramètres globaux</li>
+                        </ul>
+                        <p>Utilisez le menu de navigation pour accéder à toutes les fonctionnalités d'administration.</p>
+                    </div>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <h3>Utilisateurs actifs</h3>
+                            <p class="stat-number">4</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Offres publiées</h3>
+                            <p class="stat-number">13</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Candidatures totales</h3>
+                            <p class="stat-number"> 5</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}

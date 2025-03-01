@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Toutes les Offres - Dashboard Entreprise{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_all_offres.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/sidebar.html.twig' with {'active': 'all_offres'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="all-offres-main">
+                <div class="all-offres-header">
+                    <h1>Toutes les Offres</h1>
+                </div>
+
+                {% if allOffres is empty %}
+                    <p class="no-offers">Aucune offre disponible pour le moment.</p>
+                {% else %}
+                    <div class="offers-list">
+                        {% for offre in allOffres %}
+                            <div class="offer-item">
+                                <h2 class="offer-title">{{ offre.titre }}</h2>
+                                <p class="offer-description">{{ offre.description }}</p>
+                                <div class="offer-details">
+                                    <span class="offer-company">Entreprise : {{ offre.entreprise.nomEntreprise }}</span>
+                                    <span class="offer-contract">Type de contrat : {{ offre.typeContrat|default('Non précisé') }}</span>
+                                    <span class="offer-location">Localisation : {{ offre.localisation|default('Non précisé') }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}

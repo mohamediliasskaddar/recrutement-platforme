@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Entreprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/inscription_entreprise.css">
+</head>
+<body>
+<header class="header">
+    <h1>Inscription Entreprise</h1>
+</header>
+
+<main class="main-content">
+    <section class="company-info">
+        <h2>Pourquoi nous rejoindre ?</h2>
+        <p>Découvrez les avantages de notre plateforme pour votre entreprise. En rejoignant notre réseau, vous bénéficiez d'un accès direct à un vivier de candidats qualifiés et motivés, ce qui facilite grandement vos processus de recrutement.</p>
+        <p>Publiez vos offres d'emploi en quelques clics et gérez vos candidatures en temps réel grâce à une interface simple et intuitive. Profitez d'outils d'analyse et de statistiques pour suivre l'évolution de vos recrutements et prendre des décisions éclairées.</p>
+        <p>Notre plateforme vous offre également un accompagnement personnalisé pour optimiser votre visibilité et attirer les meilleurs talents, tout en réduisant le temps et les coûts liés au recrutement.</p>
+        <p>Faites le choix de la qualité et de l'efficacité pour renforcer votre équipe et assurer la croissance de votre entreprise.</p>
+        <!-- Ajoutez ici plus d'informations sur votre plateforme -->
+    </section>
+
+    <section class="registration-form">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <form method="post" action="{{ path('inscription_entreprise') }}">
+            <fieldset>
+                <legend>Informations de connexion</legend>
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Informations sur l'entreprise</legend>
+                <div class="form-group">
+                    <label for="nomEntreprise">Nom de l'entreprise :</label>
+                    <input type="text" id="nomEntreprise" name="nomEntreprise" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description :</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="secteurs">Secteurs d'activité :</label>
+                    <textarea id="secteurs" name="secteurs"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="siteWeb">Site web :</label>
+                    <input type="url" id="siteWeb" name="siteWeb">
+                </div>
+            </fieldset>
+
+            <button type="submit">S'inscrire</button>
+        </form>
+
+        <div class="login-link">
+            <p>Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2025 Votre Entreprise. Tous droits réservés.</p>
+</footer>
+</body>
+</html>

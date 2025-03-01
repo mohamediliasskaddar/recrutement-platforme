@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Invitation à un entretien</title>
+</head>
+<body>
+    <p>Bonjour {{ candidate.nomcomplet }},</p>
+
+    <p>
+        Nous vous remercions pour votre candidature à l'offre "<strong>{{ offre.titre }}</strong>" publiée par <strong>{{ entreprise.nomEntreprise }}</strong>.
+    </p>
+
+    <p>
+        Nous avons le plaisir de vous inviter à un entretien afin de discuter de votre candidature.
+    </p>
+    <p>
+        <strong>Détails de l'entretien :</strong><br>
+        Lieu : <em>{{ interviewLocation }}</em><br>
+        Date et heure : <em>{{ interviewDate }}</em><br>
+        Documents à apporter : <em>{{ requiredDocuments }}</em>
+    </p>
+
+    <p>
+        Merci de bien vouloir nous confirmer votre présence.
+    </p>
+
+<p>
+    Cordialement,<br>
+    L'équipe de {{ entreprise.nomEntreprise }}
+</p>
+</body>
+</html>

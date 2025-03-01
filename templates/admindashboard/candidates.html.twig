@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% block title %}Candidats - Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin_candidates.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_sidebar.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-dashboard-container">
+        {% include 'admindashboard/admin_sidebar.html.twig' with {'active': 'candidates'} %}
+        <main class="admin-main-content">
+            <h1 class="page-title">
+                <span data-feather="users"></span>
+                Liste des Candidats
+            </h1>
+            <div class="export-button">
+                <a href="{{ path('admin_candidates_export') }}"
+                   class="btn btn-success"
+                   style="background-color: #28a745; border: 2px solid #1e7e34; color: #fff; padding: 10px 20px; margin: 20px; text-decoration: none; font-weight: bold; border-radius: 4px;">
+                    Exporter en Excel
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>Nom Complet</th>
+                        <th>Email</th>
+                        <th>Sexe</th>
+                        <th>Ville</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for candidate in candidates %}
+                        <tr>
+                            <td>{{ candidate.nomcomplet }}</td>
+                            <td>{{ candidate.user.email }}</td>
+                            <td>{{ candidate.sexe|default('N/A') }}</td>
+                            <td>{{ candidate.ville|default('N/A') }}</td>
+                            <td>
+                                <a href="{{ path('admin_candidate_delete', {'id': candidate.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce candidat ?');">
+                                    <span data-feather="trash-2">supprimer</span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            feather.replace();
+        });
+    </script>
+{% endblock %}
+

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Candidat{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/candidat_sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/candidat_dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'dashboard'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="dashboard-main">
+                <div class="dashboard-header">
+                    <h1>Bienvenue, {{ candidat.nomcomplet }}</h1>
+                </div>
+                <div class="dashboard-content">
+                    <div class="welcome-card">
+                        <h2>Votre carrière, notre priorité</h2>
+                        <p>Bienvenue sur votre espace personnel. Ici, vous pouvez :</p>
+                        <ul>
+                            <li>Consulter et postuler aux meilleures offres d'emploi</li>
+                            <li>Suivre l'état de vos candidatures en temps réel</li>
+                            <li>Recevoir des notifications personnalisées</li>
+                            <li>Mettre à jour votre profil pour attirer les recruteurs</li>
+                        </ul>
+                        <p>Commencez dès maintenant à explorer les opportunités qui s'offrent à vous !</p>
+                    </div>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <h3>Offres consultées</h3>
+                            <p class="stat-number">15</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Candidatures en cours</h3>
+                            <p class="stat-number">3</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Nouvelles notifications</h3>
+                            <p class="stat-number">2</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

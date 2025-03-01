@@ -1,0 +1,110 @@
+:root {
+    --sidebar-width: 250px;
+    --primary-color: #4a90e2;
+    --secondary-color: #5a6268;
+    --background-color: #f8f9fa;
+    --text-color: #333333;
+    --border-color: #e1e1e1;
+    --sidebar-hover-bg-color: #e9ecef;
+    --sidebar-active-bg-color: #4a90e2;
+    --sidebar-active-text-color: #ffffff;
+    --sidebar-icon-color: #6c757d;
+    --sidebar-transition: all 0.3s ease;
+}
+body{
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--background-color);
+    overflow-y: auto;
+    transition: var(--sidebar-transition);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-content {
+    padding: 1rem 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: var(--sidebar-transition);
+}
+
+.sidebar-link:hover {
+    background-color: var(--sidebar-hover-bg-color);
+}
+
+.sidebar-link.active {
+    background-color: var(--sidebar-active-bg-color);
+    color: var(--sidebar-active-text-color);
+}
+
+.sidebar-icon {
+    margin-right: 0.5rem;
+    width: 1.25em;
+    height: 1.25em;
+    color: var(--sidebar-icon-color);
+}
+
+.sidebar-link.active .sidebar-icon {
+    color: var(--sidebar-active-text-color);
+}
+
+.sidebar-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .sidebar-item {
+        margin: 0.25rem;
+    }
+
+    .sidebar-link {
+        flex-direction: column;
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    .sidebar-icon {
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+
+    .sidebar-text {
+        font-size: 0.8rem;
+    }
+}
+

@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entreprises - Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin_sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_candidates.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-dashboard-container">
+        {% include 'admindashboard/admin_sidebar.html.twig' with {'active': 'enterprises'} %}
+        <main class="admin-main-content">
+                <h1 class="page-title">
+                    <span data-feather="users"></span>
+                    Liste des Entreprises
+                </h1>
+                <div class="export-button">
+                    <a href="{{ path('admin_enterprises_export') }}" >
+                       Exporter en Excel
+                    </a>
+                </div>
+
+
+
+
+
+
+            <section class="content-body">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Secteur</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for enterprise in enterprises %}
+                            <tr>
+                                <td>{{ enterprise.nomEntreprise }}</td>
+                                <td>{{ enterprise.user.email }}</td>
+                                <td>{{ enterprise.secteurs|default('N/A') }}</td>
+                                <td>
+                                    <a href="{{ path('admin_enterprise_delete', {'id': enterprise.id}) }}" class="btn btn-danger"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?');">
+                                        <span class="btn-icon" aria-hidden="true">🗑️</span>
+                                        <span class="btn-text">Supprimer</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+{% endblock %}

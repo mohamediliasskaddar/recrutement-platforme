@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Offres - Dashboard Entreprise{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_mes_offres.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/sidebar.html.twig' with {'active': 'mes_offres'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="mes-offres-main">
+                <div class="mes-offres-header">
+                    <h1>Mes Offres - {{ entreprise.nomEntreprise }}</h1>
+                </div>
+
+                {% if mesOffres is empty %}
+                    <p class="no-offers">Vous n'avez pas encore créé d'offres.</p>
+                {% else %}
+                    <div class="offers-list">
+                        {% for offre in mesOffres %}
+                            <div class="offer-item">
+                                <h2 class="offer-title">{{ offre.titre }}</h2>
+                                <p class="offer-description">{{ offre.description }}</p>
+                                <div class="offer-details">
+                                    <span class="offer-contract">Type de contrat : {{ offre.typeContrat|default('Non précisé') }}</span>
+                                    <span class="offer-location">Localisation : {{ offre.localisation|default('Non précisé') }}</span>
+                                </div>
+                                <div class="offer-actions">
+                                    <a href="{{ path('offre_stats', {'offreId': offre.id}) }}" class="btn btn-stats">Voir Statistiques</a>
+                                    <a href="{{ path('offer_delete', {'offreId': offre.id}) }}" class="btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">Supprimer</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

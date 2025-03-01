@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Candidat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/candidat_sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_profile.css') }}">
+</head>
+<body>
+<div class="dashboard-container">
+    {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'profile'} %}
+
+    <div class="dashboard-content-wrapper">
+        <main class="profile-main">
+            <header class="profile-header">
+                <h1>Profil de {{ candidat.nomcomplet }}</h1>
+                <a href="{{ path('candidat_profile_edit') }}" class="btn btn-edit">Modifier Mon Profil</a>
+            </header>
+
+            <div class="profile-content">
+                <section class="profile-info">
+                    <h2>Informations personnelles</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">{{ candidat.user.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Date de naissance</span>
+                            <span class="info-value">{{ candidat.dateNaissance|date('d/m/Y') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">CNIE</span>
+                            <span class="info-value">{{ candidat.cnie }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sexe</span>
+                            <span class="info-value">{{ candidat.sexe|default('Non spécifié') }}</span>
+                        </div>
+                        <div class="info-item">
+
+                            <span class="info-label">Ville</span>
+                            <span class="info-value">{{ candidat.ville|default('Non spécifié') }}</span>
+
+                        </div>
+                        <div class="info-item">
+                            {% if candidat.imagePersonnelle %}
+                            <span class="info-label">Image personnelle</span>
+                            <img src="/{{ candidat.imagePersonnelle }}" alt="Image de {{ candidat.nomcomplet }}" class="profile-image">
+                            {% endif %}
+
+                        </div>
+                        <div class="info-item">
+                            {% if candidat.cvPath %}
+
+                            <span class="info-label">CV</span>
+                            <a href="/{{ candidat.cvPath }}" target="_blank" class="btn btn-download">Télécharger CV</a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="profile-details">
+                    <h2>Détails professionnels</h2>
+                    <div class="details-item">
+                        <h3>Compétences</h3>
+                        <p>{{ candidat.competences|default('Non renseigné') }}</p>
+                    </div>
+                    <div class="details-item">
+                        <h3>Expériences</h3>
+                        <p>{{ candidat.experiences|default('Non renseigné') }}</p>
+                    </div>
+                    <div class="details-item">
+                        <h3>Formations</h3>
+                        <p>{{ candidat.formations|default('Non renseigné') }}</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <footer class="profile-footer">
+                <a href="{{ path('candidat_dashboard') }}" class="btn btn-back">Retour au Dashboard</a>
+            </footer>
+        </main>
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notifications - Dashboard Candidat{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/candidat_notifications.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'notifications'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="notifications-main">
+                <div class="notifications-header">
+                    <h1>Notifications</h1>
+                </div>
+
+                {% if notifications is empty %}
+                    <p class="no-notifications">Aucune notification.</p>
+                {% else %}
+                    <ul class="notifications-list">
+                        {% for notification in notifications %}
+                            <li class="notification-item">
+                                <div class="notification-content">
+                                    {{ notification.message }}
+                                </div>
+                                <div class="notification-time">
+                                    {{ notification.createdAt|date('d/m/Y H:i') }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

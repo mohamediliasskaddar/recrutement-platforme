@@ -1,0 +1,53 @@
+
+
+
+
+<nav class="sidebar">
+    <div class="sidebar-sticky">
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'dashboard' ? 'active' : '' }}" href="{{ path('candidat_dashboard') }}">
+                    <span class="sidebar-icon" data-feather="home"></span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'profile' ? 'active' : '' }}" href="{{ path('candidat_profile') }}">
+                    <span class="sidebar-icon" data-feather="user"></span>
+                    Mon Profil
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'offers' ? 'active' : '' }}" href="{{ path('candidat_offres') }}">
+                    <span class="sidebar-icon" data-feather="briefcase"></span>
+                    Offres
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'candidatures' ? 'active' : '' }}" href="{{ path('candidat_candidatures') }}">
+                    <span class="sidebar-icon" data-feather="file"></span>
+                    Mes Candidatures
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'ressources' ? 'active' : '' }}" href="{{ path('dashboard_ressources') }}">
+                    <span class="sidebar-icon" data-feather="bell"></span>
+                    ressources d'apprentissages
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'notifications' ? 'active' : '' }}" href="{{ path('candidat_notifications') }}">
+                    <span class="sidebar-icon" data-feather="bell"></span>
+                    Notifications
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{{ path('app_logout') }}">
+                    <span class="sidebar-icon" data-feather="log-out"></span>
+                    Déconnexion
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

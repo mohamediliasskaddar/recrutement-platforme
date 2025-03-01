@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Profil Entreprise{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_edit_profile.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/sidebar.html.twig' with {'active': 'profile'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="edit-profile-main">
+                <div class="edit-profile-header">
+                    <h1>Modifier Profil Entreprise</h1>
+                </div>
+
+                <div class="edit-profile-form">
+                    {{ form_start(form, {'attr': {'class': 'profile-form'}}) }}
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ form_label(field) }}
+                            {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(field) }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        <a href="{{ path('entreprise_profile') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

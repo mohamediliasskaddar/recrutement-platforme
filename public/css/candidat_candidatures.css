@@ -1,0 +1,115 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #5a6268;
+    --background-color: #f8f9fa;
+    --text-color: #333333;
+    --border-color: #e1e1e1;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --border-radius: 20px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-content-wrapper {
+    flex-grow: 1;
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+}
+
+.candidatures-main {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.candidatures-header {
+    margin-bottom: 2rem;
+}
+
+.candidatures-header h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #4a90e2;
+    font-size: 2rem;
+    font-weight: 500;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.no-candidatures {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-top: 2rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.candidatures-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: var(--box-shadow);
+    border-radius: 50px;
+}
+
+.candidatures-table th,
+.candidatures-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    //border-radius: 50px;
+}
+
+.candidatures-table th {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    //border-radius: 50px;
+}
+
+.candidatures-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.candidatures-table tr:hover {
+    background-color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+    .dashboard-content-wrapper {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .candidatures-table {
+        font-size: 0.9rem;
+    }
+
+    .candidatures-table th,
+    .candidatures-table td {
+        padding: 0.75rem;
+    }
+
+    .candidatures-table th {
+        font-size: 0.8rem;
+    }
+}
+

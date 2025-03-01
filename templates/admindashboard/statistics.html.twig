@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques - Admin Dashboard{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin_sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_statistics.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-dashboard-container">
+        {% include 'admindashboard/admin_sidebar.html.twig' with {'active': 'statistics'} %}
+        <main class="admin-main-content">
+            <h1 class="page-title">Statistiques Générales</h1>
+
+            <section class="stats-summary">
+                <div class="stat-box bg-info">
+                    <h3 class="stat-title">Utilisateurs Totaux</h3>
+                    <p class="stat-value">{{ totalUsers }}</p>
+                </div>
+                <div class="stat-box bg-primary">
+                    <h3 class="stat-title">Candidats</h3>
+                    <p class="stat-value">{{ totalCandidates }}</p>
+                </div>
+                <div class="stat-box bg-success">
+                    <h3 class="stat-title">Entreprises</h3>
+                    <p class="stat-value">{{ totalEnterprises }}</p>
+                </div>
+                <div class="stat-box bg-warning">
+                    <h3 class="stat-title">Offres Totales</h3>
+                    <p class="stat-value">{{ totalOffers }}</p>
+                </div>
+            </section>
+
+            <section class="stats-charts">
+                <div class="chart-container">
+                    <h3 class="chart-title">Distribution des Candidats par Sexe</h3>
+                    <canvas id="genderChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Répartition des Comptes</h3>
+                    <canvas id="accountsChart"></canvas>
+                </div>
+            </section>
+
+            <section class="stats-charts">
+                <div class="chart-container full-width">
+                    <h3 class="chart-title">Comptes Créés par Semaine</h3>
+                    <canvas id="weeklyAccountsChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Graphique circulaire pour la distribution par sexe
+        const ctxGender = document.getElementById('genderChart').getContext('2d');
+        new Chart(ctxGender, {
+            type: 'pie',
+            data: {
+                labels: {{ genderLabels|raw }},
+                datasets: [{
+                    data: {{ genderData|raw }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Répartition des Candidats par Sexe' }
+                }
+            }
+        });
+
+        // Graphique à barres pour la répartition des comptes (candidats vs entreprises)
+        const ctxAccounts = document.getElementById('accountsChart').getContext('2d');
+        new Chart(ctxAccounts, {
+            type: 'bar',
+            data: {
+                labels: {{ accountsLabels|raw }},
+                datasets: [{
+                    label: 'Nombre de Comptes',
+                    data: {{ accountsData|raw }},
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                },
+                plugins: {
+                    title: { display: true, text: 'Répartition des Comptes' }
+                }
+            }
+        });
+
+        // Histogramme pour les comptes créés par semaine (si vous souhaitez le garder)
+        const ctxWeekly = document.getElementById('weeklyAccountsChart').getContext('2d');
+        new Chart(ctxWeekly, {
+            type: 'bar',
+            data: {
+                labels: {{ weekLabels|raw }},
+                datasets: [{
+                    label: 'Nombre de Comptes Créés',
+                    data: {{ weekData|raw }},
+                    backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
+                },
+                plugins: {
+                    title: { display: true, text: 'Comptes Créés par Semaine' }
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Candidat</title>
+    <link rel="stylesheet" href="/css/inscription_entreprise.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <h1>Inscription Candidat</h1>
+</header>
+<main class="main-content">
+    <section class="company-info">
+              <h2>Pourquoi nous rejoindre ?</h2>
+                <p>Découvrez les opportunités qui vous attendent sur notre plateforme...</p>
+                <p>Rejoignez notre plateforme et découvrez des opportunités de carrière exclusives, un environnement de travail stimulant, ainsi qu'un accompagnement personnalisé pour vous aider à atteindre vos objectifs professionnels.</p>
+                <p>Accédez à des offres d'emploi sélectionnées et adaptées à votre profil.</p>
+                <p>Rejoignez une communauté dynamique de professionnels et élargissez votre réseau.</p>
+                <p>Participez à des ateliers et des rencontres pour développer vos compétences.</p>
+    </section>
+    <section class="registration-form">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+        <form method="post" action="{{ path('inscription_candidat') }}" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Informations de connexion</legend>
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Informations personnelles</legend>
+                <div class="form-group">
+                    <label for="nomcomplet">Nom complet :</label>
+                    <input type="text" id="nomcomplet" name="nomcomplet" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateNaissance">Date de naissance :</label>
+                    <input type="date" id="dateNaissance" name="dateNaissance" required>
+                </div>
+                <div class="form-group">
+                    <label for="cnie">CNIE :</label>
+                    <input type="text" id="cnie" name="cnie" required>
+                </div>
+                <div class="form-group">
+                    <label for="sexe">Sexe :</label>
+                    <select id="sexe" name="sexe">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ville">Ville :</label>
+                    <input type="text" id="ville" name="ville">
+                </div>
+                <div class="form-group">
+                    <label for="competences">Compétences :</label>
+                    <textarea id="competences" name="competences"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="experiences">Expériences :</label>
+                    <textarea id="experiences" name="experiences"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="formations">Formations :</label>
+                    <textarea id="formations" name="formations"></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Documents</legend>
+                <div class="form-group file-input">
+                    <label for="cv">CV :</label>
+                    <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx">
+                </div>
+                <div class="form-group file-input">
+                    <label for="image_personnelle">Image personnelle :</label>
+                    <input type="file" id="image_personnelle" name="image_personnelle" accept="image/*">
+                </div>
+            </fieldset>
+
+            <button type="submit">S'inscrire</button>
+        </form>
+
+        <div class="login-link">
+            <p>Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </section>
+</main>
+<footer class="footer">
+    <p>&copy; 2025 Votre Entreprise. Tous droits réservés.</p>
+</footer>
+</body>
+</html>

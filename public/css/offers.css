@@ -1,0 +1,132 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #5a6268;
+    --background-color: #f8f9fa;
+    --text-color: #333333;
+    --border-color: #e1e1e1;
+    --danger-color: #dc3545;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+    --sidebar-width: 250px;
+}
+body{
+    font-family: 'Poppins', sans-serif;
+}
+.admin-dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    margin-left: var(--sidebar-width);
+    background-color: var(--background-color);
+}
+
+.content-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.content-body {
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-table th {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.admin-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-icon {
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .admin-main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .content-body {
+        padding: 1rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 0.75rem;
+    }
+
+    .btn-text {
+        display: none;
+    }
+
+    .btn-icon {
+        margin-right: 0;
+    }
+}

@@ -1,0 +1,145 @@
+{# templates/dashboard/entreprise.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Entreprise</title>
+    <!-- too delete this pagee           Inclusion de Bootstrap pour une mise en page agréable -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar de navigation -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ path('entreprise_dashboard') }}">
+                            <span data-feather="home"></span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('entreprise_profile') }}">
+                            <span data-feather="user"></span>
+                            Mon Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#notifications">
+                            <span data-feather="bell"></span>
+                            Notifications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#mes-offres">
+                            <span data-feather="briefcase"></span>
+                            Mes Offres
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#all-offres">
+                            <span data-feather="layers"></span>
+                            Toutes les Offres
+                        </a>
+                    </li>
+                    <!--<li class="nav-item mt-3">
+                        <a href="{{ path('offer_create') }}" class="btn btn-primary w-100">
+                            Créer une Offre
+                        </a>
+                    </li>-->
+                    <li class="nav-item ">
+                        <a href="{{ path('offer_create') }}" class="nav-link">
+                            Créer une Offre
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Bienvenue, {{ entreprise.nomEntreprise }}</h1>
+            </div>
+
+            <!-- Section Notifications -->
+            <section id="notifications" class="mb-4">
+                <h3>Notifications</h3>
+                {% if notifications is empty %}
+                    <p>Aucune notification.</p>
+                {% else %}
+                    <ul class="list-group">
+                        {% for notification in notifications %}
+                            <li class="list-group-item">
+                                {{ notification.message }}<br>
+                                <small class="text-muted">{{ notification.createdAt|date('d/m/Y H:i') }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+
+            <!-- Section Mes Offres (offres de l'entreprise) -->
+            <section id="mes-offres" class="mb-4">
+                <h3>Mes Offres</h3>
+                {% if mesOffres is empty %}
+                    <p>Vous n'avez pas encore créé d'offres.</p>
+                {% else %}
+                    <div class="list-group">
+                        {% for offre in mesOffres %}
+                            <div class="list-group-item">
+                                <h5 class="mb-1">{{ offre.titre }}</h5>
+                                <p class="mb-1">{{ offre.description }}</p>
+                                <small>
+                                    Type de contrat : {{ offre.typeContrat|default('Non précisé') }} -
+                                    Localisation : {{ offre.localisation|default('Non précisé') }}
+                                </small>
+                                <div class="mt-2">
+                                    <a href="{{ path('offre_stats', {'offreId': offre.id}) }}" class="btn btn-info btn-sm">
+                                        Voir Statistiques
+                                    </a>
+                                    <a href="{{ path('offer_delete', {'offreId': offre.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                                        Supprimer
+                                    </a>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+
+            <!-- Section Toutes les Offres -->
+            <section id="all-offres" class="mb-4">
+                <h3>Toutes les Offres</h3>
+                {% if allOffres is empty %}
+                    <p>Aucune offre disponible pour le moment.</p>
+                {% else %}
+                    <div class="list-group">
+                        {% for offre in allOffres %}
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <h5 class="mb-1">{{ offre.titre }}</h5>
+                                <p class="mb-1">{{ offre.description }}</p>
+                                <small>
+                                    Entreprise : {{ offre.entreprise.nomEntreprise }} -
+                                    Type de contrat : {{ offre.typeContrat|default('Non précisé') }} -
+                                    Localisation : {{ offre.localisation|default('Non précisé') }}
+                                </small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- Inclusion de Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

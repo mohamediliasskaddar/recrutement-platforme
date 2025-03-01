@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une Offre{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/offre_create.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/sidebar.html.twig' with {'active': 'create_offer'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="create-offer-main">
+                <div class="create-offer-header">
+                    <h1>Créer une Offre</h1>
+                </div>
+
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="create-offer-form">
+                    {{ form_start(form, {'attr': {'class': 'offer-form'}}) }}
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ form_label(field) }}
+                            {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(field) }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Créer l'offre</button>
+                        <a href="{{ path('entreprise_dashboard') }}" class="btn btn-secondary">Retour au Dashboard</a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

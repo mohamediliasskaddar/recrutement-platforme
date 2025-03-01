@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur IMKConnect - Votre Avenir Professionnel Commence Ici{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="landing-page">
+        <header class="hero">
+            <nav class="navbar">
+                <div class="logo">IMKConnect</div>
+                <ul class="nav-links">
+                    <li><a href="{{ path('app_login') }}" class="btn btn-secondary">Connexion</a></li>
+                    <li><a href="{{ path('app_login') }}" class="btn btn-secondary">inscription</a></li>
+                </ul>
+            </nav>
+            <div class="hero-content">
+                <h1>Votre Avenir Professionnel Commence Ici</h1>
+                <p>Découvrez des opportunités de carrière uniques, connectez-vous avec des entreprises innovantes et propulsez votre carrière vers de nouveaux sommets.</p>
+
+            </div>
+        </header>
+
+        <section id="about" class="about">
+            <h2>Pourquoi Choisir IMKConnect ?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <i class="fas fa-search"></i>
+                    <h3>Recherche Intelligente</h3>
+                    <p>Trouvez les offres qui correspondent parfaitement à vos compétences et aspirations.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-handshake"></i>
+                    <h3>Mise en Relation Directe</h3>
+                    <p>Communiquez directement avec les recruteurs et les entreprises.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Suivi de Carrière</h3>
+                    <p>Outils et ressources pour suivre et booster votre progression professionnelle.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="statistics" class="statistics">
+            <h2>Notre Impact en Chiffres</h2>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number">{{ totalUsers }}</span>
+                    <span class="stat-label">Utilisateurs Actifs</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ totalCandidates }}</span>
+                    <span class="stat-label">Candidats Inscrits</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ totalEnterprises }}</span>
+                    <span class="stat-label">Entreprises Partenaires</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured-offers" class="featured-offers">
+            <h2>Offres en Vedette</h2>
+            {% if offers is not empty %}
+                <div class="offers-grid">
+                    {% for offer in offers|slice(0, 3) %}
+                        <div class="offer-card">
+                            <h3>{{ offer.titre }}</h3>
+                            <p>{{ offer.description|slice(0, 100) ~ '...' }}</p>
+                            <a href="{{ path('app_login') }}" class="btn btn-outline">En savoir plus</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-offers">Nouvelles opportunités à venir. Restez à l'écoute !</p>
+            {% endif %}
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <h2>Ce que disent nos utilisateurs</h2>
+            <div class="testimonial-slider">
+                <div class="testimonial">
+                    <p>"Grâce à IMKConnect, j'ai trouvé mon emploi de rêve en seulement une semaines!"</p>
+                    <cite>- Marie D, Développeuse Web</cite>
+                </div>
+                <div class="testimonial">
+                    <p>"Une plateforme intuitive qui a révolutionné notre processus de recrutement."</p>
+                    <cite>- Jean L, DRH chez TechInno</cite>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>IMKConnect</h3>
+                    <p>Votre partenaire pour un avenir professionnel brillant.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="#">Accueil</a></li>
+                        <li><a href="#">Recherche d'emplois</a></li>
+                        <li><a href="#">Pour les entreprises</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Nous Contacter</h3>
+                    <p>Email: contact@IMKconnect.com</p>
+                    <p>Téléphone: +05 97 22 67 59</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IMKConnect. Tous droits réservés.</p>
+            </div>
+        </footer>
+    </div>
+{% endblock %}

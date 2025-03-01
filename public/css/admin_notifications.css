@@ -1,0 +1,113 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #5a6268;
+    --background-color: #f8f9fa;
+    --text-color: #333333;
+    --border-color: #e1e1e1;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --sidebar-width: 250px;
+}
+
+.admin-dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    margin-left: var(--sidebar-width);
+
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #4a90e2;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.notifications-container {
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+}
+
+.no-notifications {
+    text-align: center;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+.notifications-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 0;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-message {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.notification-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--secondary-color);
+}
+
+.notification-user {
+    font-weight: bold;
+}
+
+.notification-date {
+    font-style: italic;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 768px) {
+    .admin-main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .notifications-container {
+        padding: 1rem;
+    }
+
+    .notification-item {
+        padding: 1rem 0;
+    }
+
+    .notification-details {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+}

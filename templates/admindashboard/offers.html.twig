@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/admin_candidates.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin_sidebar.css') }}">
+
+{% endblock %}
+
+{% block title %}Offres - Admin Dashboard{% endblock %}
+
+{% block body %}
+<div class="admin-dashboard-container">
+            {% include 'admindashboard/admin_sidebar.html.twig' with {'active': 'offers'} %}
+    <main class="admin-main-content">
+                <h1 class="page-title">Liste de Toutes les Offres</h1>
+        <div class="table-responsive">
+
+            <table class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Description</th>
+                        <th>Salaire</th>
+                        <th>Localisation</th>
+                        <th>Type de contrat</th>
+                        <th>Date de création</th>
+                        <th>Entreprise</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for offer in offers %}
+                        <tr>
+                            <td>{{ offer.titre }}</td>
+                            <td>{{ offer.description }}</td>
+                            <td>{{ offer.salaire|default('N/A') }}</td>
+                            <td>{{ offer.localisation|default('N/A') }}</td>
+                            <td>{{ offer.typeContrat|default('N/A') }}</td>
+                            <td>{{ offer.createdAt|date('d/m/Y') }}</td>
+                            <td>{{ offer.entreprise.nomEntreprise }}</td>
+                            <td>
+                                <a href="{{ path('admin_offer_delete', {'id': offer.id}) }}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ?');">
+                                    Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+{% endblock %}

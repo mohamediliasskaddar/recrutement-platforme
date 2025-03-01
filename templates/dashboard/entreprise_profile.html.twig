@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Entreprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/entreprise_profile.css') }}">
+</head>
+<body>
+<div class="dashboard-container">
+    {% include 'dashboard/sidebar.html.twig' with {'active': 'profile'} %}
+
+    <div class="dashboard-content-wrapper">
+        <main class="profile-main">
+            <header class="profile-header">
+                <h1>Profil de {{ entreprise.nomEntreprise }}</h1>
+                <a href="{{ path('entreprise_profile_edit') }}" class="btn btn-edit">Modifier Mon Profil</a>
+            </header>
+
+            <div class="profile-content">
+                <section class="profile-info">
+                    <h2>Informations de l'entreprise</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">{{ entreprise.user.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Site web</span>
+                            <span class="info-value">
+                                    {% if entreprise.siteWeb %}
+                                        <a href="{{ entreprise.siteWeb }}" target="_blank">{{ entreprise.siteWeb }}</a>
+                                    {% else %}
+                                        Non renseigné
+                                    {% endif %}
+                                </span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-details">
+                    <h2>Détails de l'entreprise</h2>
+                    <div class="details-item">
+                        <h3>Description</h3>
+                        <p>{{ entreprise.description|default('Non renseigné') }}</p>
+                    </div>
+                    <div class="details-item">
+                        <h3>Secteurs d'activité</h3>
+                        <p>{{ entreprise.secteurs|default('Non renseigné') }}</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
+

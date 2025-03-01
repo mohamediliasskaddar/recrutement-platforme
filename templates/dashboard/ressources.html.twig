@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ressources pour Développer Vos Compétences{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ressources.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'profile'} %}
+        <div class="content-wrapper">
+            <header class="resources-header">
+                <h1>Ressources pour Développer Vos Compétences</h1>
+                <p>Découvrez une sélection de sites proposant des formations dans divers domaines tels que la programmation, le marketing, la médecine, l'industrie, l'électronique, et bien plus encore.</p>
+            </header>
+
+            <section class="resources-list">
+                {% for resource in resources %}
+                    <div class="resource-card">
+                        <h2 class="resource-title">{{ resource.title }}</h2>
+                        <p class="resource-domain"><strong>Domaine :</strong> {{ resource.domain }}</p>
+                        <p class="resource-description">{{ resource.description }}</p>
+                        <a href="{{ resource.url }}" target="_blank" class="btn btn-outline">Visiter le site</a>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

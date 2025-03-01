@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Candidatures - Dashboard Candidat{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/candidat_candidatures.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'candidatures'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="candidatures-main">
+                <div class="candidatures-header">
+                    <h1>Mes Candidatures</h1>
+                </div>
+
+                {% if candidatures is empty %}
+                    <p class="no-candidatures">Vous n'avez pas encore postulé à une offre.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="candidatures-table">
+                            <thead>
+                            <tr>
+                                <th>Offre</th>
+                                <th>Statut</th>
+                                <th>Date de postulation</th>
+                                <th>Entreprise</th>
+                                <th>Email de l'entreprise</th>
+                                <th>Secteur</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for candidature in candidatures %}
+                                <tr>
+                                    <td>{{ candidature.offre.titre }}</td>
+                                    <td>{{ candidature.statut }}</td>
+                                    <td>{{ candidature.datePostulation|date('d/m/Y H:i') }}</td>
+                                    <td>{{ candidature.offre.entreprise.nomEntreprise }}</td>
+                                    <td>{{ candidature.offre.entreprise.user.email }}</td>
+                                    <td>{{ candidature.offre.entreprise.secteurs|default('Non renseigné') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

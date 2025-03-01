@@ -1,0 +1,133 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques de l'Offre : {{ offre.titre }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/offre_stats.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Chargement de Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Initialisation du graphique -->
+    <script>
+        // On s'assure que le DOM est entièrement chargé
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('genderChart').getContext('2d');
+            const genderChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Femmes', 'Hommes'],
+                    datasets: [{
+                        data: [{{ nbFemmes }}, {{ nbHommes }}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Répartition des candidatures par sexe'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/sidebar.html.twig' with {'active': 'mes_offres'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="stats-main">
+                <div class="stats-header">
+                    <h1>Statistiques de l'Offre : {{ offre.titre }}</h1>
+                </div>
+
+                <div class="stats-content">
+                    <div class="offer-details">
+                        <p><strong>Description :</strong> {{ offre.description }}</p>
+                        {% if daysRemaining is not null %}
+                            <p><strong>Jours restants pour la fermeture :</strong> {{ daysRemaining }}</p>
+                        {% else %}
+                            <p><strong>Jours restants pour la fermeture :</strong> Non spécifié</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="stats-summary">
+                        <h2>Candidatures</h2>
+                        <p><strong>Total :</strong> {{ totalCandidatures }}</p>
+                        <p><strong>Nombre de femmes :</strong> {{ nbFemmes }}</p>
+                        <p><strong>Nombre d'hommes :</strong> {{ nbHommes }}</p>
+                    </div>
+
+                    <div class="candidates-details">
+                        <h2>Détails des candidats</h2>
+                        {% if candidatsDetails is empty %}
+                            <p>Aucun candidat n'a postulé pour cette offre.</p>
+                        {% else %}
+                            <div class="table-responsive">
+                                <table class="candidates-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom Complet</th>
+                                        <th>Email</th>
+                                        <th>CV</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for candidat in candidatsDetails %}
+                                        <tr>
+                                            <td>{{ candidat.nomcomplet }}</td>
+                                            <td>{{ candidat.email }}</td>
+                                            <td>
+                                                {% if candidat.cvPath %}
+                                                    <a href="/{{ candidat.cvPath }}" target="_blank" class="cv-link">Télécharger CV</a>
+                                                {% else %}
+                                                    Non fourni
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ path('offre_send_mail', {'offreId': offre.id, 'candidateId': candidat.id}) }}" class="btn btn-primary">
+                                                    Envoyer Email
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="stats-chart">
+                        <h2>Répartition par sexe</h2>
+                        <canvas id="genderChart" width="100" height="100"></canvas>
+                    </div>
+
+                    <div class="stats-actions">
+                        <a href="{{ path('entreprise_dashboard') }}" class="btn btn-secondary">Retour au Dashboard</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}

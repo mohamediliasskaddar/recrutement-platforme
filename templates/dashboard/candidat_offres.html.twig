@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Offres - Dashboard Candidat{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/candidat_offers.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="dashboard-container">
+        {% include 'dashboard/candidat_sidebar.html.twig' with {'active': 'offers'} %}
+
+        <div class="dashboard-content-wrapper">
+            <main class="offers-main">
+                <div class="offers-header">
+                    <h1>Offres Disponibles</h1>
+                </div>
+
+                {% if offres is empty %}
+                    <p class="no-offers">Aucune offre disponible pour le moment.</p>
+                {% else %}
+                    <div class="offers-list">
+                        {% for offre in offres %}
+                            <div class="offer-item">
+                                <h2 class="offer-title">{{ offre.titre }}</h2>
+                                <p class="offer-description">{{ offre.description }}</p>
+                                <div class="offer-details">
+                                    <p><strong>Type de contrat :</strong> {{ offre.typeContrat|default('Non précisé') }}</p>
+                                    <p><strong>Localisation :</strong> {{ offre.localisation|default('Non précisé') }}</p>
+                                    <p><strong>Salaire :</strong> {{ offre.salaire|default('Non précisé') }}</p>
+                                    <p><strong>Date de création :</strong> {{ offre.createdAt|date('d/m/Y H:i') }}</p>
+                                    <p><strong>Email de l'entreprise :</strong> {{ offre.entreprise.user.email }}</p>
+                                </div>
+                                <div class="offer-actions">
+                                    <a href="{{ path('candidature_postuler', {'offreId': offre.id}) }}" class="btn btn-success">
+                                        Postuler
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+

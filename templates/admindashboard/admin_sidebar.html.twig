@@ -1,0 +1,50 @@
+<nav class="admin-sidebar">
+    <div class="sidebar-content">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'dashboard' ? 'active' : '' }}" href="{{ path('admin_dashboard') }}">
+                    <span class="sidebar-icon" data-feather="home"></span>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'candidates' ? 'active' : '' }}" href="{{ path('admin_candidates') }}">
+                    <span class="sidebar-icon" data-feather="users"></span>
+                    <span class="sidebar-text">Candidats</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'enterprises' ? 'active' : '' }}" href="{{ path('admin_enterprises') }}">
+                    <span class="sidebar-icon" data-feather="briefcase"></span>
+                    <span class="sidebar-text">Entreprises</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'offers' ? 'active' : '' }}" href="{{ path('admin_offers') }}">
+                    <span class="sidebar-icon" data-feather="file-text"></span>
+                    <span class="sidebar-text">Toutes les Offres</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'statistics' ? 'active' : '' }}" href="{{ path('admin_statistics') }}">
+                    <span class="sidebar-icon" data-feather="bar-chart-2"></span>
+                    <span class="sidebar-text">Statistiques</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link {{ active == 'notifications' ? 'active' : '' }}" href="{{ path('admin_notifications') }}">
+                    <span class="sidebar-icon" data-feather="bell"></span>
+                    <span class="sidebar-text">Notifications</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="{{ path('app_logout') }}">
+                    <span class="sidebar-icon" data-feather="log-out"></span>
+                    <span class="sidebar-text">Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
