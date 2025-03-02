@@ -1,0 +1,873 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
+
+-- Started on 2025-03-01 22:50:26
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 230 (class 1255 OID 42362)
+-- Name: notify_messenger_messages(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.notify_messenger_messages() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+            BEGIN
+                PERFORM pg_notify('messenger_messages', NEW.queue_name::text);
+                RETURN NEW;
+            END;
+        $$;
+
+
+ALTER FUNCTION public.notify_messenger_messages() OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 217 (class 1259 OID 42278)
+-- Name: candidat; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.candidat (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    nomcomplet character varying(255) NOT NULL,
+    date_naissance date NOT NULL,
+    cnie character varying(50) NOT NULL,
+    sexe character varying(10) DEFAULT NULL::character varying,
+    ville character varying(255) DEFAULT NULL::character varying,
+    cv_path character varying(255) DEFAULT NULL::character varying,
+    image_personnelle character varying(255) DEFAULT NULL::character varying,
+    competences text,
+    experiences text,
+    formations text
+);
+
+
+ALTER TABLE public.candidat OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 42277)
+-- Name: candidat_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.candidat_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.candidat_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4945 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: candidat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.candidat_id_seq OWNED BY public.candidat.id;
+
+
+--
+-- TOC entry 219 (class 1259 OID 42292)
+-- Name: candidature; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.candidature (
+    id integer NOT NULL,
+    candidat_id integer NOT NULL,
+    offre_id integer NOT NULL,
+    statut character varying(50) DEFAULT 'en attente'::character varying NOT NULL,
+    date_postulation timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.candidature OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 42291)
+-- Name: candidature_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.candidature_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.candidature_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4946 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: candidature_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.candidature_id_seq OWNED BY public.candidature.id;
+
+
+--
+-- TOC entry 215 (class 1259 OID 42271)
+-- Name: doctrine_migration_versions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.doctrine_migration_versions (
+    version character varying(191) NOT NULL,
+    executed_at timestamp(0) without time zone DEFAULT NULL::timestamp without time zone,
+    execution_time integer
+);
+
+
+ALTER TABLE public.doctrine_migration_versions OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 42303)
+-- Name: entreprise; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.entreprise (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    nom_entreprise character varying(255) NOT NULL,
+    description text,
+    secteurs text,
+    site_web character varying(255) DEFAULT NULL::character varying
+);
+
+
+ALTER TABLE public.entreprise OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 42302)
+-- Name: entreprise_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.entreprise_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.entreprise_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4947 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: entreprise_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.entreprise_id_seq OWNED BY public.entreprise.id;
+
+
+--
+-- TOC entry 229 (class 1259 OID 42350)
+-- Name: messenger_messages; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.messenger_messages (
+    id bigint NOT NULL,
+    body text NOT NULL,
+    headers text NOT NULL,
+    queue_name character varying(190) NOT NULL,
+    created_at timestamp(0) without time zone NOT NULL,
+    available_at timestamp(0) without time zone NOT NULL,
+    delivered_at timestamp(0) without time zone DEFAULT NULL::timestamp without time zone
+);
+
+
+ALTER TABLE public.messenger_messages OWNER TO postgres;
+
+--
+-- TOC entry 4948 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: COLUMN messenger_messages.created_at; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.messenger_messages.created_at IS '(DC2Type:datetime_immutable)';
+
+
+--
+-- TOC entry 4949 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: COLUMN messenger_messages.available_at; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.messenger_messages.available_at IS '(DC2Type:datetime_immutable)';
+
+
+--
+-- TOC entry 4950 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: COLUMN messenger_messages.delivered_at; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.messenger_messages.delivered_at IS '(DC2Type:datetime_immutable)';
+
+
+--
+-- TOC entry 228 (class 1259 OID 42349)
+-- Name: messenger_messages_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.messenger_messages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.messenger_messages_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4951 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: messenger_messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.messenger_messages_id_seq OWNED BY public.messenger_messages.id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 42314)
+-- Name: notification; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.notification (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    message text NOT NULL,
+    lu boolean DEFAULT false NOT NULL,
+    created_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.notification OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 42313)
+-- Name: notification_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.notification_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.notification_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4952 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: notification_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.notification_id_seq OWNED BY public.notification.id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 42326)
+-- Name: offre; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.offre (
+    id integer NOT NULL,
+    entreprise_id integer NOT NULL,
+    titre character varying(255) NOT NULL,
+    description text NOT NULL,
+    salaire character varying(50) DEFAULT NULL::character varying,
+    localisation character varying(255) DEFAULT NULL::character varying,
+    type_contrat character varying(50) DEFAULT NULL::character varying,
+    created_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    date_fin timestamp(0) without time zone DEFAULT NULL::timestamp without time zone
+);
+
+
+ALTER TABLE public.offre OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 42325)
+-- Name: offre_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.offre_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.offre_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4953 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: offre_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.offre_id_seq OWNED BY public.offre.id;
+
+
+--
+-- TOC entry 227 (class 1259 OID 42342)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    email character varying(180) NOT NULL,
+    password character varying(255) NOT NULL,
+    role character varying(50) NOT NULL,
+    date_inscription timestamp(0) without time zone DEFAULT NULL::timestamp without time zone
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 42341)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4954 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 4725 (class 2604 OID 42281)
+-- Name: candidat id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidat ALTER COLUMN id SET DEFAULT nextval('public.candidat_id_seq'::regclass);
+
+
+--
+-- TOC entry 4730 (class 2604 OID 42295)
+-- Name: candidature id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidature ALTER COLUMN id SET DEFAULT nextval('public.candidature_id_seq'::regclass);
+
+
+--
+-- TOC entry 4733 (class 2604 OID 42306)
+-- Name: entreprise id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.entreprise ALTER COLUMN id SET DEFAULT nextval('public.entreprise_id_seq'::regclass);
+
+
+--
+-- TOC entry 4747 (class 2604 OID 42353)
+-- Name: messenger_messages id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messenger_messages ALTER COLUMN id SET DEFAULT nextval('public.messenger_messages_id_seq'::regclass);
+
+
+--
+-- TOC entry 4735 (class 2604 OID 42317)
+-- Name: notification id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification ALTER COLUMN id SET DEFAULT nextval('public.notification_id_seq'::regclass);
+
+
+--
+-- TOC entry 4738 (class 2604 OID 42329)
+-- Name: offre id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.offre ALTER COLUMN id SET DEFAULT nextval('public.offre_id_seq'::regclass);
+
+
+--
+-- TOC entry 4745 (class 2604 OID 42345)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 4927 (class 0 OID 42278)
+-- Dependencies: 217
+-- Data for Name: candidat; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.candidat (id, user_id, nomcomplet, date_naissance, cnie, sexe, ville, cv_path, image_personnelle, competences, experiences, formations) FROM stdin;
+2	4	MED MED	2025-02-01	U122	Homme	MED	cv/MED_MED_cv.pdf	images/MED_MED_img.png	MED	MED	MED
+3	5	ka ka ko ko	2025-02-01	12	Femme	Errachidia	cv/ka_ka_ko_ko_1739021219.docx	images/ka_ka_ko_ko_1739021219.png	PPPPHPPP SYMFPHONYY	PPPPHPPP SYMFPHONYY	PPPPHPPP SYMFPHONYY
+4	8	ki	2025-02-01	12	Femme	tanger	cv/ki_cv.pdf	images/ki_img.jpg	ki	ki	ki
+5	9	moham iliass	2004-11-01	U2105733	Homme	tanger	cv/moham_iliass_cv.pdf	images/moham_iliass_img.jpg	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+7	17	ss	2025-02-15	ss	Femme	ss	cv/ss_cv.pdf	images/ss_img.jpg	sss	ss	ss
+1	1	Mohamed Iliass KADDAR	2025-02-06	U210537	Homme	Errachidia	cv/mohamed_iliass_kaddar_1740499391.pdf	images/mohamed_iliass_kaddar_1739399931.jpg	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+8	20	ahmed sefrioui 	2025-03-01	U21057338	Homme	SEFROU	cv/ahmed_sefrioui__cv.pdf	images/ahmed_sefrioui__img.png	LOOO KNAKZ NZKZ KZNKZ CK KZNKZ 	LOOO KNAKZ NZKZ KZNKZ CK KZNKZ 	LOOO KNAKZ NZKZ KZNKZ CK KZNKZ 
+\.
+
+
+--
+-- TOC entry 4929 (class 0 OID 42292)
+-- Dependencies: 219
+-- Data for Name: candidature; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.candidature (id, candidat_id, offre_id, statut, date_postulation) FROM stdin;
+1	1	1	en attente	2025-02-07 14:14:50
+2	1	2	acceptée	2025-02-07 14:14:50
+4	2	2	en attente	2025-02-07 16:53:27
+5	2	1	en attente	2025-02-07 16:53:41
+7	3	1	en attente	2025-02-08 13:30:46
+8	5	1	en attente	2025-02-11 18:47:56
+9	5	2	en attente	2025-02-11 18:48:02
+10	5	4	en attente	2025-02-11 18:48:10
+11	1	12	en attente	2025-02-12 23:39:56
+12	1	13	en attente	2025-02-12 23:40:09
+\.
+
+
+--
+-- TOC entry 4925 (class 0 OID 42271)
+-- Dependencies: 215
+-- Data for Name: doctrine_migration_versions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.doctrine_migration_versions (version, executed_at, execution_time) FROM stdin;
+DoctrineMigrations\\Version20250206161934	2025-02-06 17:19:49	164
+DoctrineMigrations\\Version20250209172939	2025-02-09 18:29:52	109
+\.
+
+
+--
+-- TOC entry 4931 (class 0 OID 42303)
+-- Dependencies: 221
+-- Data for Name: entreprise; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.entreprise (id, user_id, nom_entreprise, description, secteurs, site_web) FROM stdin;
+2	7	lo	lo	finance	https://facebook.com
+7	16	k	k	k	https://facebook.com
+8	19	kk	ll	ll	https://fr-fr.facebook.com
+1	2	IMK COMPANY	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur	Éducation (public privé)	https://www.bing.com
+\.
+
+
+--
+-- TOC entry 4939 (class 0 OID 42350)
+-- Dependencies: 229
+-- Data for Name: messenger_messages; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.messenger_messages (id, body, headers, queue_name, created_at, available_at, delivered_at) FROM stdin;
+1	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:13:\\"yes@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:3:\\"yes\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:7:\\"yes yes\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:3:\\"U12\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:0:\\"\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:3:\\"YES\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:17:\\"cv/yes_yes_cv.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:22:\\"images/yes_yes_img.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:1:\\"e\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:2:\\"ef\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:2:\\"ef\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:18:\\"ilaiss is the best\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:5:\\"aleez\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:10:\\"allezzzzzz\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"14/02/2025 11:05\\";s:17:\\"requiredDocuments\\";s:34:\\"Références, Diplômes, Portfolio\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:13:\\"yes@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-02-11 17:47:14	2025-02-11 17:47:14	\N
+2	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:5;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:9;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:3:\\"imk\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";N;}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:12:\\"moham iliass\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2004-11-01 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:8:\\"U2105733\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:6:\\"tanger\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:22:\\"cv/moham_iliass_cv.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:27:\\"images/moham_iliass_img.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:18:\\"ilaiss is the best\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:5:\\"aleez\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:10:\\"allezzzzzz\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:34;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"21/02/2025 09:46\\";s:17:\\"requiredDocuments\\";s:45:\\"Lettre de motivation, Références, Portfolio\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-02-11 17:48:42	2025-02-11 17:48:42	\N
+3	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:13:\\"yes@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:3:\\"yes\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:7:\\"yes yes\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:3:\\"U12\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:0:\\"\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:3:\\"YES\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:17:\\"cv/yes_yes_cv.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:22:\\"images/yes_yes_img.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:1:\\"e\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:2:\\"ef\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:2:\\"ef\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:2;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:18:\\"ilaiss is the best\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:5:\\"aleez\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:10:\\"allezzzzzz\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:14:\\"Designer UX/UI\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:62:\\"Nous cherchons un designer UX/UI pour renforcer notre équipe.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"3500€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:4:\\"Lyon\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDD\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-28 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:31:\\"321 Route de Bordeaux, Bordeaux\\";s:13:\\"interviewDate\\";s:16:\\"19/02/2025 16:01\\";s:17:\\"requiredDocuments\\";s:31:\\"Lettre de motivation, Portfolio\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:13:\\"yes@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:56:\\"Invitation à un entretien pour l\\'offre : Designer UX/UI\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-02-11 17:54:54	2025-02-11 17:54:54	\N
+4	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:5;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:9;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:3:\\"imk\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";N;}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:12:\\"moham iliass\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2004-11-01 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:8:\\"U2105733\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:6:\\"tanger\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:22:\\"cv/moham_iliass_cv.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:27:\\"images/moham_iliass_img.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:256:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:2;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:18:\\"ilaiss is the best\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:5:\\"aleez\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:10:\\"allezzzzzz\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:14:\\"Designer UX/UI\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:62:\\"Nous cherchons un designer UX/UI pour renforcer notre équipe.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"3500€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:4:\\"Lyon\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDD\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-28 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:34;s:17:\\"interviewLocation\\";s:23:\\"123 Rue de Paris, Paris\\";s:13:\\"interviewDate\\";s:16:\\"19/02/2025 09:23\\";s:17:\\"requiredDocuments\\";s:16:\\"Références, CV\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:56:\\"Invitation à un entretien pour l\\'offre : Designer UX/UI\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-02-11 17:55:06	2025-02-11 17:55:06	\N
+5	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"05/03/2025 16:51\\";s:17:\\"requiredDocuments\\";s:38:\\"Références, Lettre de motivation, CV\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 00:25:04	2025-03-01 00:25:04	\N
+6	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:23:\\"654 Rue de Lille, Lille\\";s:13:\\"interviewDate\\";s:16:\\"10/03/2025 14:48\\";s:17:\\"requiredDocuments\\";s:45:\\"Lettre de motivation, Portfolio, Références\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 00:25:07	2025-03-01 00:25:07	\N
+7	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"05/03/2025 15:30\\";s:17:\\"requiredDocuments\\";s:35:\\"CV, Portfolio, Lettre de motivation\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:29:\\"mohamediliasskaddar@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 00:25:15	2025-03-01 00:25:15	\N
+8	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"04/03/2025 13:18\\";s:17:\\"requiredDocuments\\";s:34:\\"Références, Lettre de motivation\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 00:29:13	2025-03-01 00:29:13	\N
+9	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"07/03/2025 09:37\\";s:17:\\"requiredDocuments\\";s:24:\\"Portfolio, CV, Diplômes\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 00:32:12	2025-03-01 00:32:12	\N
+10	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:2;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:14:\\"Designer UX/UI\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:62:\\"Nous cherchons un designer UX/UI pour renforcer notre équipe.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"3500€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:4:\\"Lyon\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDD\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-28 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:23:\\"123 Rue de Paris, Paris\\";s:13:\\"interviewDate\\";s:16:\\"05/03/2025 15:59\\";s:17:\\"requiredDocuments\\";s:13:\\"Diplômes, CV\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:56:\\"Invitation à un entretien pour l\\'offre : Designer UX/UI\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 21:54:39	2025-03-01 21:54:39	\N
+11	O:36:\\"Symfony\\\\Component\\\\Messenger\\\\Envelope\\":2:{s:44:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0stamps\\";a:1:{s:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\";a:1:{i:0;O:46:\\"Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\":1:{s:55:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Stamp\\\\BusNameStamp\\0busName\\";s:21:\\"messenger.bus.default\\";}}}s:45:\\"\\0Symfony\\\\Component\\\\Messenger\\\\Envelope\\0message\\";O:51:\\"Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\":2:{s:60:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0message\\";O:39:\\"Symfony\\\\Bridge\\\\Twig\\\\Mime\\\\TemplatedEmail\\":5:{i:0;s:37:\\"emails/interview_invitation.html.twig\\";i:1;N;i:2;a:6:{s:9:\\"candidate\\";O:19:\\"App\\\\Entity\\\\Candidat\\":12:{s:23:\\"\\0App\\\\Entity\\\\Candidat\\0id\\";i:1;s:25:\\"\\0App\\\\Entity\\\\Candidat\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":5:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:1;s:23:\\"\\0App\\\\Entity\\\\Users\\0email\\";s:24:\\"mohamediliassk@gmail.com\\";s:26:\\"\\0App\\\\Entity\\\\Users\\0password\\";s:2:\\"ca\\";s:22:\\"\\0App\\\\Entity\\\\Users\\0role\\";s:8:\\"candidat\\";s:34:\\"\\0App\\\\Entity\\\\Users\\0date_inscription\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2024-02-09 15:30:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:31:\\"\\0App\\\\Entity\\\\Candidat\\0nomcomplet\\";s:21:\\"Mohamed Iliass KADDAR\\";s:34:\\"\\0App\\\\Entity\\\\Candidat\\0dateNaissance\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-06 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Candidat\\0cnie\\";s:7:\\"U210537\\";s:25:\\"\\0App\\\\Entity\\\\Candidat\\0sexe\\";s:5:\\"Homme\\";s:26:\\"\\0App\\\\Entity\\\\Candidat\\0ville\\";s:10:\\"Errachidia\\";s:27:\\"\\0App\\\\Entity\\\\Candidat\\0cvPath\\";s:39:\\"cv/mohamed_iliass_kaddar_1740499391.pdf\\";s:37:\\"\\0App\\\\Entity\\\\Candidat\\0imagePersonnelle\\";s:43:\\"images/mohamed_iliass_kaddar_1739399931.jpg\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0competences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:32:\\"\\0App\\\\Entity\\\\Candidat\\0experiences\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Candidat\\0formations\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";}s:5:\\"offre\\";O:16:\\"App\\\\Entity\\\\Offre\\":10:{s:20:\\"\\0App\\\\Entity\\\\Offre\\0id\\";i:1;s:28:\\"\\0App\\\\Entity\\\\Offre\\0entreprise\\";O:21:\\"App\\\\Entity\\\\Entreprise\\":6:{s:25:\\"\\0App\\\\Entity\\\\Entreprise\\0id\\";i:1;s:27:\\"\\0App\\\\Entity\\\\Entreprise\\0user\\";O:31:\\"Proxies\\\\__CG__\\\\App\\\\Entity\\\\Users\\":1:{s:20:\\"\\0App\\\\Entity\\\\Users\\0id\\";i:2;}s:36:\\"\\0App\\\\Entity\\\\Entreprise\\0nomEntreprise\\";s:11:\\"IMK COMPANY\\";s:34:\\"\\0App\\\\Entity\\\\Entreprise\\0description\\";s:333:\\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur\\";s:31:\\"\\0App\\\\Entity\\\\Entreprise\\0secteurs\\";s:26:\\"Éducation (public privé)\\";s:30:\\"\\0App\\\\Entity\\\\Entreprise\\0siteWeb\\";s:20:\\"https://www.bing.com\\";}s:23:\\"\\0App\\\\Entity\\\\Offre\\0titre\\";s:20:\\"Développeur Symfony\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0description\\";s:55:\\"Nous recherchons un développeur Symfony expérimenté.\\";s:25:\\"\\0App\\\\Entity\\\\Offre\\0salaire\\";s:7:\\"4000€\\";s:30:\\"\\0App\\\\Entity\\\\Offre\\0localisation\\";s:5:\\"Paris\\";s:29:\\"\\0App\\\\Entity\\\\Offre\\0typeContrat\\";s:3:\\"CDI\\";s:27:\\"\\0App\\\\Entity\\\\Offre\\0createdAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:27:\\"\\0App\\\\Entity\\\\Offre\\0updatedAt\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-02-07 14:14:38.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}s:25:\\"\\0App\\\\Entity\\\\Offre\\0dateFin\\";O:8:\\"DateTime\\":3:{s:4:\\"date\\";s:26:\\"2025-03-10 00:00:00.000000\\";s:13:\\"timezone_type\\";i:3;s:8:\\"timezone\\";s:13:\\"Europe/Berlin\\";}}s:10:\\"entreprise\\";r:37;s:17:\\"interviewLocation\\";s:24:\\"456 Avenue de Lyon, Lyon\\";s:13:\\"interviewDate\\";s:16:\\"04/03/2025 09:25\\";s:17:\\"requiredDocuments\\";s:24:\\"Lettre de motivation, CV\\";}i:3;a:6:{i:0;N;i:1;N;i:2;N;i:3;N;i:4;a:0:{}i:5;a:2:{i:0;O:37:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\":2:{s:46:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0headers\\";a:3:{s:4:\\"from\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:4:\\"From\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:17:\\"medpc59@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:2:\\"to\\";a:1:{i:0;O:47:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:2:\\"To\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:58:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\MailboxListHeader\\0addresses\\";a:1:{i:0;O:30:\\"Symfony\\\\Component\\\\Mime\\\\Address\\":2:{s:39:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0address\\";s:24:\\"mohamediliassk@gmail.com\\";s:36:\\"\\0Symfony\\\\Component\\\\Mime\\\\Address\\0name\\";s:0:\\"\\";}}}}s:7:\\"subject\\";a:1:{i:0;O:48:\\"Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\":5:{s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0name\\";s:7:\\"Subject\\";s:56:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lineLength\\";i:76;s:50:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0lang\\";N;s:53:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\AbstractHeader\\0charset\\";s:5:\\"utf-8\\";s:55:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\UnstructuredHeader\\0value\\";s:62:\\"Invitation à un entretien pour l\\'offre : Développeur Symfony\\";}}}s:49:\\"\\0Symfony\\\\Component\\\\Mime\\\\Header\\\\Headers\\0lineLength\\";i:76;}i:1;N;}}i:4;N;}s:61:\\"\\0Symfony\\\\Component\\\\Mailer\\\\Messenger\\\\SendEmailMessage\\0envelope\\";N;}}	[]	default	2025-03-01 22:01:44	2025-03-01 22:01:44	\N
+\.
+
+
+--
+-- TOC entry 4933 (class 0 OID 42314)
+-- Dependencies: 223
+-- Data for Name: notification; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.notification (id, user_id, message, lu, created_at) FROM stdin;
+3	9	Nouveau compte candidat créé: candidat1@example.com	f	2025-02-12 23:52:15
+4	9	Nouveau compte candidat créé: candidat2@example.com	f	2025-02-12 23:52:15
+5	9	Nouveau compte entreprise créé: entreprise1@example.com	f	2025-02-12 23:52:15
+6	9	Nouveau compte candidat créé: candidat3@example.com	f	2025-02-12 23:52:15
+7	9	Nouveau compte candidat créé: candidat4@example.com	f	2025-02-12 23:52:15
+8	9	Nouveau compte entreprise créé: entreprise5@example.com	f	2025-02-12 23:52:15
+9	1	Nouvelle offre disponible: Développeur PHP/Symfony chez TechCorp.	f	2025-02-12 23:56:16
+10	1	Nouvelle offre disponible: Ingénieur DevOps chez TechCorp.	f	2025-02-12 23:56:16
+11	1	Nouvelle offre disponible: Consultant IT chez TechCorp.	f	2025-02-12 23:56:16
+12	1	Nouvelle offre disponible: Développeur Front-end chez TechCorp.	f	2025-02-12 23:56:16
+13	2	Nouveau candidat a postulé pour votre offre: Développeur PHP/Symfony.	f	2025-02-12 23:57:47
+14	2	Nouveau candidat a postulé pour votre offre: Infirmier(ère).	f	2025-02-12 23:57:47
+\.
+
+
+--
+-- TOC entry 4935 (class 0 OID 42326)
+-- Dependencies: 225
+-- Data for Name: offre; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.offre (id, entreprise_id, titre, description, salaire, localisation, type_contrat, created_at, updated_at, date_fin) FROM stdin;
+1	1	Développeur Symfony	Nous recherchons un développeur Symfony expérimenté.	4000€	Paris	CDI	2025-02-07 14:14:38	2025-02-07 14:14:38	2025-03-10 00:00:00
+2	1	Designer UX/UI	Nous cherchons un designer UX/UI pour renforcer notre équipe.	3500€	Lyon	CDD	2025-02-07 14:14:38	2025-02-07 14:14:38	2025-02-28 00:00:00
+4	1	figmaa	fzdzc	40000$	errrr	stage	2025-02-07 23:19:44	2025-02-07 23:19:44	2025-02-27 23:19:00
+5	1	tataatttat	tta	40000$	errrr	stage	2025-02-11 13:07:19	2025-02-11 13:07:19	2025-02-28 13:06:00
+6	1	Développeur PHP/Symfony	Recherche développeur PHP avec expérience Symfony.	3500€	Paris	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-12-31 00:00:00
+7	1	Ingénieur DevOps	Expert en automatisation et déploiement continu.	4000€	Paris	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-11-30 00:00:00
+8	1	Consultant IT	Consultant pour projets de transformation digitale.	4500€	Paris	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-10-15 00:00:00
+9	1	Développeur Front-end	Spécialiste React et Angular.	3200€	Paris	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-09-30 00:00:00
+10	2	Infirmier(ère)	Poste à pourvoir en hôpital.	2800€	Lyon	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-08-31 00:00:00
+11	2	Médecin Généraliste	Recherche médecin généraliste pour clinique.	5000€	Lyon	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-07-31 00:00:00
+12	2	Technicien de Laboratoire	Spécialiste pour analyses médicales.	3000€	Lyon	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-06-30 00:00:00
+13	2	Assistant Administratif	Support administratif pour clinique.	2500€	Lyon	CDI	2025-02-12 23:36:41	2025-02-12 23:36:41	2025-05-31 00:00:00
+16	1	zzd	s	40000$	errrr	CD	2025-03-01 22:51:18	2025-03-01 22:51:18	2025-03-01 21:51:00
+17	1	syyyy	syyyyyyy	trhth	trrj	stage	2025-03-01 23:03:12	2025-03-01 23:03:12	2025-03-01 12:05:00
+\.
+
+
+--
+-- TOC entry 4937 (class 0 OID 42342)
+-- Dependencies: 227
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, email, password, role, date_inscription) FROM stdin;
+2	kaddarmohamediliass@gmail.com	en	entreprise	2024-02-04 15:30:00
+4	candidat2@example.com	med	candidat	2024-02-10 15:30:00
+5	candidat3@example.com	ka	candidat	2024-01-09 15:30:00
+7	entreprise1@example.com	lo	entreprise	2024-01-09 15:30:00
+8	candidat5@example.com	ki	candidat	2024-02-09 15:30:00
+9	ad@gmail.com	ad	admin	2024-02-10 15:30:00
+16	hh@gmail.com	hh	entreprise	\N
+17	ss@gmail.com	ss	candidat	\N
+19	kk@gmail.com	kk	entreprise	\N
+1	mohamediliassk@gmail.com	ca	candidat	2024-02-09 15:30:00
+20	add@gmail.com	add	candidat	\N
+\.
+
+
+--
+-- TOC entry 4955 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: candidat_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.candidat_id_seq', 8, true);
+
+
+--
+-- TOC entry 4956 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: candidature_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.candidature_id_seq', 12, true);
+
+
+--
+-- TOC entry 4957 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: entreprise_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.entreprise_id_seq', 8, true);
+
+
+--
+-- TOC entry 4958 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: messenger_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.messenger_messages_id_seq', 11, true);
+
+
+--
+-- TOC entry 4959 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.notification_id_seq', 14, true);
+
+
+--
+-- TOC entry 4960 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: offre_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.offre_id_seq', 17, true);
+
+
+--
+-- TOC entry 4961 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 20, true);
+
+
+--
+-- TOC entry 4752 (class 2606 OID 42289)
+-- Name: candidat candidat_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidat
+    ADD CONSTRAINT candidat_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4755 (class 2606 OID 42299)
+-- Name: candidature candidature_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidature
+    ADD CONSTRAINT candidature_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4750 (class 2606 OID 42276)
+-- Name: doctrine_migration_versions doctrine_migration_versions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.doctrine_migration_versions
+    ADD CONSTRAINT doctrine_migration_versions_pkey PRIMARY KEY (version);
+
+
+--
+-- TOC entry 4759 (class 2606 OID 42311)
+-- Name: entreprise entreprise_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.entreprise
+    ADD CONSTRAINT entreprise_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4774 (class 2606 OID 42358)
+-- Name: messenger_messages messenger_messages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messenger_messages
+    ADD CONSTRAINT messenger_messages_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4763 (class 2606 OID 42323)
+-- Name: notification notification_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT notification_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4766 (class 2606 OID 42339)
+-- Name: offre offre_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.offre
+    ADD CONSTRAINT offre_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4769 (class 2606 OID 42347)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4770 (class 1259 OID 42361)
+-- Name: idx_75ea56e016ba31db; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_75ea56e016ba31db ON public.messenger_messages USING btree (delivered_at);
+
+
+--
+-- TOC entry 4771 (class 1259 OID 42360)
+-- Name: idx_75ea56e0e3bd61ce; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_75ea56e0e3bd61ce ON public.messenger_messages USING btree (available_at);
+
+
+--
+-- TOC entry 4772 (class 1259 OID 42359)
+-- Name: idx_75ea56e0fb7336f0; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_75ea56e0fb7336f0 ON public.messenger_messages USING btree (queue_name);
+
+
+--
+-- TOC entry 4764 (class 1259 OID 42340)
+-- Name: idx_af86866fa4aeafea; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_af86866fa4aeafea ON public.offre USING btree (entreprise_id);
+
+
+--
+-- TOC entry 4761 (class 1259 OID 42324)
+-- Name: idx_bf5476caa76ed395; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_bf5476caa76ed395 ON public.notification USING btree (user_id);
+
+
+--
+-- TOC entry 4756 (class 1259 OID 42301)
+-- Name: idx_e33bd3b84cc8505a; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_e33bd3b84cc8505a ON public.candidature USING btree (offre_id);
+
+
+--
+-- TOC entry 4757 (class 1259 OID 42300)
+-- Name: idx_e33bd3b88d0eb82; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_e33bd3b88d0eb82 ON public.candidature USING btree (candidat_id);
+
+
+--
+-- TOC entry 4767 (class 1259 OID 42348)
+-- Name: uniq_1483a5e9e7927c74; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_1483a5e9e7927c74 ON public.users USING btree (email);
+
+
+--
+-- TOC entry 4753 (class 1259 OID 42290)
+-- Name: uniq_6ab5b471a76ed395; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_6ab5b471a76ed395 ON public.candidat USING btree (user_id);
+
+
+--
+-- TOC entry 4760 (class 1259 OID 42312)
+-- Name: uniq_d19fa60a76ed395; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX uniq_d19fa60a76ed395 ON public.entreprise USING btree (user_id);
+
+
+--
+-- TOC entry 4781 (class 2620 OID 42363)
+-- Name: messenger_messages notify_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER notify_trigger AFTER INSERT OR UPDATE ON public.messenger_messages FOR EACH ROW EXECUTE FUNCTION public.notify_messenger_messages();
+
+
+--
+-- TOC entry 4775 (class 2606 OID 42364)
+-- Name: candidat fk_6ab5b471a76ed395; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidat
+    ADD CONSTRAINT fk_6ab5b471a76ed395 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 4780 (class 2606 OID 42389)
+-- Name: offre fk_af86866fa4aeafea; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.offre
+    ADD CONSTRAINT fk_af86866fa4aeafea FOREIGN KEY (entreprise_id) REFERENCES public.entreprise(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4779 (class 2606 OID 42384)
+-- Name: notification fk_bf5476caa76ed395; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT fk_bf5476caa76ed395 FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4778 (class 2606 OID 42379)
+-- Name: entreprise fk_d19fa60a76ed395; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.entreprise
+    ADD CONSTRAINT fk_d19fa60a76ed395 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- TOC entry 4776 (class 2606 OID 42374)
+-- Name: candidature fk_e33bd3b84cc8505a; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidature
+    ADD CONSTRAINT fk_e33bd3b84cc8505a FOREIGN KEY (offre_id) REFERENCES public.offre(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4777 (class 2606 OID 42369)
+-- Name: candidature fk_e33bd3b88d0eb82; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.candidature
+    ADD CONSTRAINT fk_e33bd3b88d0eb82 FOREIGN KEY (candidat_id) REFERENCES public.candidat(id) ON DELETE CASCADE;
+
+
+-- Completed on 2025-03-01 22:50:26
+
+--
+-- PostgreSQL database dump complete
+--
+
